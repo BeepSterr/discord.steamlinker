@@ -1,4 +1,4 @@
-module.exports = class Rolemerge {
+export default class Rolemerge {
 
     #client;
     #config;

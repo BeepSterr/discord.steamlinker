@@ -1,14 +1,14 @@
-const config = require("./config.js");
-const { Client, Intents } = require("discord.js");
+import { Client, GatewayIntentBits } from 'discord.js';
+const config = (await import('./config.js')).default;
 
-let client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MEMBERS] });
+let client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMembers ] });
 
 client.modules = {};
-client.registerCommand = require('./register.js');
+client.registerCommand = (await import('./register.js')).default;
 
 client.login(config.auth.app_token);
 
-client.on('ready', ()=>{
+client.on('ready', async ()=>{
 
     console.log(`Connection to Discord established, Logged in as: ${client.user.username}`)
 
@@ -23,12 +23,13 @@ client.on('ready', ()=>{
         }
 
         console.log(`Loading module: ${moduleName}`);
-        const module = require('./modules/' + moduleName + '.js');
+        const module = (await import('./modules/' + moduleName + '.js')).default;
         client.modules[moduleName] = new module(client, moduleConfig);
         client.modules[moduleName].name = moduleName;
 
-        // Register commands
-        client.registerCommand(client, client.modules[moduleName]);
 
     }
+
+    // Register commands
+    client.registerCommand(client, client.modules);
 });

@@ -1,6 +1,11 @@
-const {SlashCommandBuilder, SlashCommandStringOption, EmbedBuilder, RGBTuple} = require("@discordjs/builders");
-const {BaseCommandInteraction, AutocompleteInteraction} = require("discord.js");
-module.exports = class CannedTexts {
+import {
+    SlashCommandBuilder,
+    SlashCommandStringOption,
+    EmbedBuilder,
+    AutocompleteInteraction,
+    CommandInteraction
+} from "discord.js";
+export default class CannedTexts {
 
     #client;
     #config;
@@ -23,7 +28,7 @@ module.exports = class CannedTexts {
         if (interaction.commandName !== 'paste') return;
 
         // Command Execution
-        if(interaction instanceof BaseCommandInteraction){
+        if(interaction instanceof CommandInteraction){
 
             const pasteName = interaction.options.get('canned_response');
             const paste = this.#config.texts[pasteName.value];
