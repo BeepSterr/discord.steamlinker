@@ -2,7 +2,7 @@ import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v10';
 import fs from "fs";
 
-const config = (await import('../config/littlehelper.js')).default;
+const config = (await import('../config.js')).default;
 export default function(client, modules){
 
     let commands = [];

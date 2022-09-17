@@ -12,7 +12,7 @@ npm install
 ```
 
 ### Setting up the config
-- Copy `config.example.js` to `littlehelper.js`
+- Copy `config.example.js` to `config.js`
 - Fill in `auth.app_token` with your bot's Token.
 - Fill in `auth.app_id` with your bot's Application Id.
 
