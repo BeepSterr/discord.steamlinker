@@ -1,5 +1,5 @@
 import { Client, GatewayIntentBits } from 'discord.js';
-const config = (await import('./config.js')).default;
+const config = (await import('../config/littlehelper.js')).default;
 
 let client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMembers ] });
 

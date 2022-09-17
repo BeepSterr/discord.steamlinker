@@ -1,0 +1,25 @@
+name: Build Image
+
+on:
+  push:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Docker Login
+        uses: azure/docker-login@v1
+        with:
+          login-server: docker.pkg.github.com
+          username: $GITHUB_ACTOR
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build -t ghcr.io/beepsterr/discord.littlehelper:${GITHUB_REF##*/} -f ./Dockerfile .
+
+      - name: Push to package
+        run: docker push ghcr.io/beepsterr/discord.littlehelper:${GITHUB_REF##*/}
