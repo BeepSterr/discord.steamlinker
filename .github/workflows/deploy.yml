@@ -15,8 +15,8 @@ jobs:
         uses: azure/docker-login@v1
         with:
           login-server: docker.pkg.github.com
-          username: $GITHUB_ACTOR
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: beepsterr
+          password: ${{ secrets.PAT }}
 
       - name: Build Docker image
         run: docker build -t ghcr.io/beepsterr/discord.littlehelper:${GITHUB_REF##*/} -f ./Dockerfile .
