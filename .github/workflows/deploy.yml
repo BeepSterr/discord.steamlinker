@@ -27,3 +27,9 @@ jobs:
 
       - name: Push to package
         run: docker push ghcr.io/beepsterr/discord.littlehelper:${GITHUB_REF##*/}
+
+      - name: Notify production of new build
+        uses: distributhor/workflow-webhook@v2
+        env:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          webhook_secret: "security_is_optional"
