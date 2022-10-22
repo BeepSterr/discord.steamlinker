@@ -1,3 +1,6 @@
+import Youtube from "./src/modules/youtube.js";
+import * as Process from "process";
+
 export default {
 
     "auth": {
@@ -56,7 +59,20 @@ export default {
 
         "youtube": {
             "enabled": true,
-            "api_key": process.env.YT_API_KEY
+            "api_key": process.env.YT_API_KEY,
+            "channels": [
+                {
+                    "channel_id": "UCFgBYsKq3As4FGcp6HJ-DeQ",
+                    "tags": {
+                        "Short": "851151899675721739",
+                        "Upload": "851151899675721739",
+                        "Stream": "851151899675721739"
+                    },
+                    "message": "Hey <@&{{tag_id}}>, something new has showed up!",
+                    "send_in": "813107194563395594",
+                    "types": [Youtube.VIDEO_TYPE_SHORT, Youtube.VIDEO_TYPE_UPLOAD, Youtube.VIDEO_TYPE_STREAM]
+                }
+            ]
         },
 
         "threadutils": {

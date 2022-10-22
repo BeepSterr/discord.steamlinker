@@ -11,8 +11,16 @@ import ytdl from "ytdl-core";
 import fs from "fs";
 import * as Path from "path"
 import fetch, {fileFromSync, FormData} from 'node-fetch';
+import * as util from "util";
+
+const YoutubeMostRecentMap = new Map();
+
 
 export default class Youtube {
+
+    static VIDEO_TYPE_SHORT = 'Short';
+    static VIDEO_TYPE_STREAM = 'Stream';
+    static VIDEO_TYPE_UPLOAD = 'Upload';
 
     #client;
     #config;
@@ -35,6 +43,44 @@ export default class Youtube {
         client.on('interactionCreate', this.handleInteraction.bind(this))
 
         this.#yt = new YouTube.YouTube(moduleConfig.api_key);
+        this.checkUpdateMap();
+        setInterval( this.checkUpdateMap.bind(this), 1000 * 60 * 10)
+
+    }
+
+    async checkUpdateMap() {
+
+        for (let ch of this.#config.channels) {
+
+            // Channel ID but instead of UC use UU to get uploads playlist
+            const playlist_videos = await this.#yt.getPlaylistItems('UU' + ch.channel_id.slice(2), 1);
+            const most_recent_video = playlist_videos[0];
+
+            if(!YoutubeMostRecentMap.has(ch.channel_id)){
+                YoutubeMostRecentMap.set(ch.channel_id, most_recent_video.id);
+            }
+
+            if(most_recent_video.id !== YoutubeMostRecentMap.get(ch.channel_id)){
+                YoutubeMostRecentMap.set(ch.channel_id, most_recent_video.id);
+                await this.sendUploadUpdate(ch, most_recent_video.id);
+            }
+
+        }
+
+    }
+
+    async sendUploadUpdate(yt_channel, video_id) {
+
+        const v = await this.#yt.getVideo(video_id);
+        const video = await this.videoFixerUpper(v);
+
+        if(yt_channel.types.includes(video.video_type)){
+
+            if(yt_channel.send_in){
+                const channel = await this.#client.channels.fetch(yt_channel.send_in)
+                await channel.send({embeds: this.getVideoEmbed(video), content: yt_channel.message.replace('{{tag_id}}', yt_channel.tags[video.video_type])});
+            }
+        }
 
     }
 
@@ -72,36 +118,46 @@ export default class Youtube {
 
         if (command !== 'ytdl') return;
 
-        let info = await ytdl.getInfo(vid);
-        let chosen_format = ytdl.chooseFormat(info.formats, {
-            quality: mode === 'mp3' ? 'highestaudio' : 'highest'
-        })
+        try{
 
-        const filename = vid + (mode === 'mp4' ? '.mp4' : '.mp3');
-        let file = Path.resolve(Youtube.tempdir, filename);
-        if(!fs.existsSync(Youtube.tempdir)){
-            fs.mkdirSync(Youtube.tempdir);
+            let info = await ytdl.getInfo(vid);
+            let chosen_format = ytdl.chooseFormat(info.formats, {
+                quality: mode === 'mp3' ? 'highestaudio' : 'highest',
+                filter: mode === 'mp3' ? 'audioonly' : 'audioandvideo'
+            })
+
+            const filename = vid + (mode === 'mp4' ? '.mp4' : '.mp3');
+            let file = Path.resolve(Youtube.tempdir, filename);
+            if(!fs.existsSync(Youtube.tempdir)){
+                fs.mkdirSync(Youtube.tempdir);
+            }
+
+            await interaction.editReply({ ephemeral: true, content: '(1/2) `Downloading...`' });
+
+            //await interaction.deferReply({ ephemeral: true });
+            const stream = ytdl.downloadFromInfo( info, { format: chosen_format}).pipe(fs.createWriteStream(file));
+
+            stream.on('')
+
+            stream.on('finish',  async () => {
+
+                const formData = new FormData()
+                const fileu = fileFromSync(file)
+
+                await interaction.editReply({ ephemeral: true, content: '(2/2) `Uploading...`' });
+
+                formData.set('file', fileu, filename);
+
+                const response = await fetch('https://awoo.download/upload', { method: 'POST', body: formData, headers: {'Authorization': 'catboygaming'} })
+                const data = await response.json()
+
+                console.log(data);
+                interaction.editReply({ ephemeral: true, content: data.url });
+
+            });
+        }catch(ex){
+            interaction.editReply({ ephemeral: true, content: 'Something went wrong while processing your request: ' + ex.message });
         }
-
-        //await interaction.deferReply({ ephemeral: true });
-        const stream = ytdl.downloadFromInfo( info, { format: chosen_format}).pipe(fs.createWriteStream(file));
-
-        stream.on('finish',  async () => {
-
-            const formData = new FormData()
-            const fileu = fileFromSync(file, filename)
-
-            formData.set('file', fileu, 'filename');
-
-            const response = await fetch('https://awoo.download/upload', { method: 'POST', body: formData, headers: {'Authorization': 'catboygaming'} })
-            const data = await response.json()
-
-            console.log(data);
-            interaction.editReply({ ephemeral: true, content: data.url });
-
-        });
-
-
 
     }
 
@@ -115,33 +171,7 @@ export default class Youtube {
         }
 
         const x = await this.#yt.getVideo(video_id);
-
-        let embed = new EmbedBuilder();
-        embed.setTitle(x.title);
-        embed.setDescription(x.description);
-        embed.setURL(x.url);
-
-        if(x.thumbnails['maxres']){
-            embed.setThumbnail(x.thumbnails['maxres'].url)
-        }else if(x.thumbnails['high']) {
-            embed.setThumbnail(x.thumbnails['high'].url)
-        }else if(x.thumbnails['default']) {
-            embed.setThumbnail(x.thumbnails['default'].url)
-        }
-
-        embed.setAuthor({ name: x.channel.name, url:`https://youtube.com/channel/${x.channel.id})`})
-
-        embed.addFields(
-
-            { name: 'Views', value: x.views.toLocaleString(), inline :true},
-            { name: 'Likes', value: x.likes.toLocaleString(), inline :true},
-
-            { name: 'Uploaded On', value: `<t:${new Date(x.datePublished).getTime() / 1000}>`},
-            { name: 'Tags', value: x.tags.join(', ')},
-
-        )
-
-        embed.setTimestamp(new Date());
+        const video = await this.videoFixerUpper(x);
 
         const id_dlmp4 = `ytdl:mp4:${video_id}`;
         const id_dlmp3 = `ytdl:mp3:${video_id}`;
@@ -162,8 +192,37 @@ export default class Youtube {
                 .setStyle(ButtonStyle.Danger)
         );
 
-        interaction.reply({ embeds: [embed.toJSON()], ephemeral: true, components: [row.toJSON()]});
+        interaction.reply({ embeds: this.getVideoEmbed(video), ephemeral: true, components: [row.toJSON()]});
 
+    }
+
+    getVideoEmbed(video){
+
+        let embed = new EmbedBuilder();
+        embed.setTitle(`(${video.video_type}) ${video.title}`);
+        embed.setDescription(video.description);
+        embed.setURL(Youtube.VIDEO_TYPE_SHORT === video.video_type ? `https://youtube.com/shorts/${video.id}` : video.url);
+
+
+        if(video.thumbnails['maxres']){
+            embed.setThumbnail(video.thumbnails['maxres'].url)
+        }else if(video.thumbnails['high']) {
+            embed.setThumbnail(video.thumbnails['high'].url)
+        }else if(video.thumbnails['default']) {
+            embed.setThumbnail(video.thumbnails['default'].url)
+        }
+
+        //embed.setAuthor({ name: video.channel.name, url: 'https://www.youtube.com/beepsterr' })
+
+        embed.addFields(
+            { name: 'Views', value: video.views.toLocaleString(), inline :true},
+            { name: 'Likes', value: video.likes.toLocaleString(), inline :true},
+            { name: 'Uploaded On', value: `<t:${new Date(video.datePublished).getTime() / 1000}>`, inline :true},
+        )
+
+        embed.setTimestamp(new Date());
+
+        return [embed.toJSON()];
     }
 
     commands(){
@@ -181,6 +240,26 @@ export default class Youtube {
                     return subcommand;
                 })
         ]
+    }
+
+    async videoFixerUpper(video) {
+
+        // set video type.
+        video.video_type = (video.liveStatus === false ? Youtube.VIDEO_TYPE_UPLOAD : Youtube.VIDEO_TYPE_STREAM);
+
+        // Check if video is a short
+        const res = await fetch(`https://yt.lemnoslife.com/videos?part=short&id=${video.id}`);
+        const json = await res.json();
+
+        const vid_js = json.items[0];
+        const short = vid_js.short.available;
+
+        if(short){
+            video.video_type = Youtube.VIDEO_TYPE_SHORT;
+        }
+
+        return video;
+
     }
 
 }
