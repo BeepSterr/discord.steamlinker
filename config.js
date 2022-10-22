@@ -1,5 +1,4 @@
 import Youtube from "./src/modules/youtube.js";
-import * as Process from "process";
 
 export default {
 
@@ -69,7 +68,7 @@ export default {
                         "Stream": "851151899675721739"
                     },
                     "message": "Hey <@&{{tag_id}}>, something new has showed up!",
-                    "send_in": "813107194563395594",
+                    "send_in": "1013471805933101178",
                     "types": [Youtube.VIDEO_TYPE_SHORT, Youtube.VIDEO_TYPE_UPLOAD, Youtube.VIDEO_TYPE_STREAM]
                 }
             ]
