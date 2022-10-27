@@ -25,7 +25,7 @@ export default {
                     "guild_id": "850836877924761610",
 
                     // Role to be granted to members.
-                    "target": "851159125365751838",
+                    "target": "1016016791421595709",
 
                     // Any of these roles need to be applied to the member to grant the role
                     "sources": [
