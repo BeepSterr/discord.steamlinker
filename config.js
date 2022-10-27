@@ -39,7 +39,7 @@ export default {
 
         // Quickly dump some canned text in the channel.
         "canned_texts": {
-            "enabled": true,
+            "enabled": false,
             "texts": {
                 "asktoask": {
                     "title": "Just ask your question!",
@@ -63,9 +63,9 @@ export default {
                 {
                     "channel_id": "UCFgBYsKq3As4FGcp6HJ-DeQ",
                     "tags": {
-                        "Short": "851151899675721739",
-                        "Upload": "851151899675721739",
-                        "Stream": "851151899675721739"
+                        "Short": "1033459059409571910",
+                        "Upload": "1016017606060290059",
+                        "Stream": "1011577268902035547"
                     },
                     "message": "Hey <@&{{tag_id}}>, something new has showed up!",
                     "send_in": "1013471805933101178",
