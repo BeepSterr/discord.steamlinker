@@ -24,3 +24,6 @@ jobs:
 
       - name: Build Docker image
         run: docker build -t beepsterr/discord.littlehelper --platform=linux/amd64 --progress=plain -f ./Dockerfile .
+
+      - name: Push to package
+        run: docker push beepsterr/discord.littlehelper
