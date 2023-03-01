@@ -9,8 +9,7 @@ export default {
 
     // Used for registering slash commands
     "guild_ids": [
-        "850836877924761610",
-        "543661757974183960"
+        "850836877924761610"
     ],
 
     "modules": {
@@ -25,7 +24,7 @@ export default {
                     "guild_id": "850836877924761610",
 
                     // Role to be granted to members.
-                    "target": "1016016791421595709",
+                    "target": "851159125365751838",
 
                     // Any of these roles need to be applied to the member to grant the role
                     "sources": [
@@ -57,7 +56,7 @@ export default {
         },
 
         "youtube": {
-            "enabled": true,
+            "enabled": false,
             "api_key": process.env.YT_API_KEY,
             "channels": [
                 {
@@ -75,7 +74,7 @@ export default {
         },
 
         "threadutils": {
-            "enabled": true,
+            "enabled": false,
             "reasons": {
                 "resolved": "The thread's topic was resolved. If you need more help, Please create a new thread.",
                 "invalid": "The thread's topic does not belong here.",
