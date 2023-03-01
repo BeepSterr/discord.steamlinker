@@ -16,21 +16,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Login to Container Registry
-        uses: docker/login-action@v2
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PAT }}
 
       - name: Build Docker image
-        run: docker build -t ghcr.io/beepsterr/discord.littlehelper:${GITHUB_REF##*/} -f ./Dockerfile .
-
-      - name: Push to package
-        run: docker push ghcr.io/beepsterr/discord.littlehelper:${GITHUB_REF##*/}
-
-      - name: Notify production of new build
-        uses: distributhor/workflow-webhook@v2
-        env:
-          webhook_url: ${{ secrets.WEBHOOK_URL }}
-          webhook_secret: "security_is_optional"
+        run: docker build -t beepsterr/discord.littlehelper --platform=linux/amd64 --progress=plain -f ./Dockerfile .
