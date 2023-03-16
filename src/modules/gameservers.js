@@ -96,8 +96,21 @@ export default class Gameservers {
             let message = await this.channel.messages.fetch(server.message_id);
             message.edit({content: '', embeds: [embed.toJSON()]});
 
-        }).catch((error) => {
-            console.log("Server is offline");
+        }).catch(async (error) => {
+            let embed = new EmbedBuilder();
+            embed.setTitle('Server is offline or not responding');
+
+            if (['tf2', 'csgo'].includes(server.type)) {
+                embed.addFields({
+                    name: 'Click to join',
+                    value: `steam://connect/${server.address}:${server.port}`,
+                    inline: false
+                });
+            }
+
+            let message = await this.channel.messages.fetch(server.message_id);
+            message.edit({content: '', embeds: [embed.toJSON()]});
+
         });
 
     }
