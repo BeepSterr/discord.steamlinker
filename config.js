@@ -73,6 +73,14 @@ export default {
             ]
         },
 
+        "autothread": {
+            "enabled": true,
+            "channels": [
+                "1085546442233479238",
+                // "1085604815595389019"
+            ]
+        },
+
         "threadutils": {
             "enabled": false,
             "reasons": {
@@ -87,6 +95,21 @@ export default {
                     "body": "- Check your issue in the [Common Issues List](https://beeps.notion.site/Troubleshooting-5bec071fa1bd459497c4fb3af5df6584)\n- Send your config.yml here\n- Send your list of plugins",
                 }
             }
+        },
+
+        "gameservers": {
+            "enabled": true,
+            "update_interval": 1000 * 10,
+            "guild_id": "850836877924761610",
+            "channel_id": "1085592890304122900",
+            "servers": [
+                {
+                    "address": "78.141.211.251",
+                    "port": '27015',
+                    "message_id": "1085613625164701726",
+                    "type": "tf2"
+                }
+            ]
         }
 
     }

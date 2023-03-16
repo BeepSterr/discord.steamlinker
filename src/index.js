@@ -1,12 +1,24 @@
 import { Client, GatewayIntentBits } from 'discord.js';
+
 const config = (await import('../config.js')).default;
 
-let client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildMembers ] });
+let client = new Client({ intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent
+    ]
+});
 
 client.modules = {};
 client.registerCommand = (await import('./register.js')).default;
 
 client.login(config.auth.app_token);
+
+client.on('messageCreate', (message) => {
+
+});
 
 client.on('ready', async ()=>{
 
