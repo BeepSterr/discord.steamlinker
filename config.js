@@ -99,6 +99,7 @@ export default {
 
         "gameservers": {
             "enabled": true,
+            "udp_port": 13337,
             "update_interval": 1000 * 30,
             "guild_id": "850836877924761610",
             "channel_id": "1085592890304122900",

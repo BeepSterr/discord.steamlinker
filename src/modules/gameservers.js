@@ -13,6 +13,8 @@ export default class Gameservers {
     command_name = 'server';
     channel = null;
 
+    checker;
+
     #client;
     #config;
 
@@ -24,6 +26,10 @@ export default class Gameservers {
 
         this.#client = client;
         this.#config = moduleConfig;
+
+        this.checker = new Gamedig({
+            listenUdpPort: this.#config.udp_port
+        })
 
         client.guilds.fetch(this.#config.guild_id).then( (guild) => {
             guild.channels.fetch(this.#config.channel_id).then( (channel) => {
@@ -50,7 +56,7 @@ export default class Gameservers {
 
     async updateServerInfo(server) {
 
-        Gamedig.query({
+        this.checker.query({
             type: server.type,
             host: server.address,
             port: server.port
