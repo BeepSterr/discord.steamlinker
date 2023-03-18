@@ -126,8 +126,10 @@ export default class Gameservers {
         // Command Execution
         if (interaction instanceof CommandInteraction && interaction.commandName === this.command_name) {
         } else if (interaction instanceof CommandInteraction && interaction.commandName === 'aye') {
-            interaction.reply('https://www.youtube.com/watch?v=cPXQDR6o3Kg', {ephemeral: false});
-            // (await interaction.channel.fetch()).send('Aye, Me bottle o scrumpy');
+            interaction.reply('https://www.youtube.com/watch?v=cPXQDR6o3Kg', {ephemeral: true});
+        }
+        else if (interaction instanceof CommandInteraction && interaction.commandName === 'createmessage') {
+            (await interaction.channel.fetch()).send('message');
         }
 
         // Autocomplete
@@ -155,7 +157,10 @@ export default class Gameservers {
                 .setDescription('Get information about a server'),
             new SlashCommandBuilder()
                 .setName('aye')
-                .setDescription('Get information about a server')
+                .setDescription('me bottle o scrumpy'),
+            new SlashCommandBuilder()
+                .setName('createmessage')
+                .setDescription('create a message for testing')
         ]
     }
 
