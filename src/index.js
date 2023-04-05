@@ -2,6 +2,7 @@ import { Client, GatewayIntentBits } from 'discord.js';
 
 const config = (await import('../config.js')).default;
 
+
 let client = new Client({ intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMembers,
@@ -13,6 +14,10 @@ let client = new Client({ intents: [
 
 client.modules = {};
 client.registerCommand = (await import('./register.js')).default;
+
+if(process.env.NODE_ENV !== 'production'){
+    client.on('debug', console.debug)
+}
 
 client.login(config.auth.app_token);
 

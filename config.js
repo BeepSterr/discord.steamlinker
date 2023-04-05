@@ -3,8 +3,8 @@ import Youtube from "./src/modules/youtube.js";
 export default {
 
     "auth": {
-        "app_id": process.env.APP_ID,
-        "app_token": process.env.APP_TOKEN
+        "app_id": "977975679591252039",
+        "app_token": "OTc3OTc1Njc5NTkxMjUyMDM5.GShw0Y.Em9cmV5bxGHtFjSfTcQ3iSFOR6Gn2u8CdnKTB0"
     },
 
     // Used for registering slash commands
@@ -95,30 +95,7 @@ export default {
                     "body": "- Check your issue in the [Common Issues List](https://beeps.notion.site/Troubleshooting-5bec071fa1bd459497c4fb3af5df6584)\n- Send your config.yml here\n- Send your list of plugins",
                 }
             }
-        },
-
-        "gameservers": {
-            "enabled": true,
-            "udp_port": 13337,
-            "update_interval": 1000 * 30,
-            "guild_id": "850836877924761610",
-            "channel_id": "1085592890304122900",
-            "servers": [
-                {
-                    "address": "78.141.211.251",
-                    "port": '27015',
-                    "message_id": "1085613625164701726",
-                    "type": "tf2"
-                },
-                {
-                    "address": "78.141.211.251",
-                    "port": '27016',
-                    "message_id": "1086599909614034984",
-                    "type": "tf2"
-                }
-            ]
         }
-
     }
 
 }
