@@ -15,8 +15,11 @@
     "@discordjs/rest": "^1.1.0",
     "discord-api-types": "^0.37.5",
     "discord.js": "^14",
+    "dotenv": "^16.0.3",
     "node-fetch": "^3.2.10",
     "popyt": "^5.0.0",
+    "steam.scraper": "github:beepsterr/steam.scraper",
+    "steamapi": "^2.2.0",
     "ytdl-core": "^4.11.1"
   }
 }

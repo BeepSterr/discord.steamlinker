@@ -2,7 +2,6 @@ import { Client, GatewayIntentBits } from 'discord.js';
 
 const config = (await import('../config.js')).default;
 
-
 let client = new Client({ intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMembers,
