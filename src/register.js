@@ -22,12 +22,21 @@ export default function(client, modules){
     (async () => {
         try {
 
-            for(let id of config.guild_ids){
+            if(process.env.NODE_ENV !== 'production'){
+                for(let id of config.guild_ids){
+                    await rest.put(
+                        Routes.applicationGuildCommands(config.auth.app_id, id),
+                        { body: commands },
+                    );
+                }
+            }else{
                 await rest.put(
-                    Routes.applicationGuildCommands(config.auth.app_id, id),
+                    Routes.applicationCommands(config.auth.app_id),
                     { body: commands },
                 );
             }
+
+
 
             console.log('Successfully reloaded application (/) commands.');
         } catch (error) {
