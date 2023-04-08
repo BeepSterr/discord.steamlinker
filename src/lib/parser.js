@@ -10,8 +10,6 @@ export function getSteamURLS(text) {
 }
 export default async function urlToEmbed(url){
 
-    console.log('urlToEmbed', url);
-
     switch(url.host){
         case 'steamcommunity.com':
             return await parseCommunity(url);
@@ -23,7 +21,6 @@ export default async function urlToEmbed(url){
 
 async function parseCommunity(url){
     let parts = url.pathname.split('/');
-    console.log(parts);
     switch(parts[1]){
 
         case 'sharedfiles':

@@ -54,8 +54,6 @@ export default class SteamLinker {
 
     async handleInteraction(interaction) {
 
-        console.log(interaction);
-
         if (interaction instanceof MessageContextMenuCommandInteraction && interaction.commandName === this.interaction_name) {
 
             // API calls can take a second, defer!
