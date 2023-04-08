@@ -7,7 +7,7 @@ let client = new Client({ intents: [
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent
+        // GatewayIntentBits.MessageContent
     ]
 });
 
