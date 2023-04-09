@@ -34,11 +34,12 @@ export default function(client, modules){
                     Routes.applicationCommands(config.auth.app_id),
                     { body: commands },
                 );
-
-                await rest.put(
-                    Routes.applicationGuildCommands(config.auth.app_id),
-                    { body: [] },
-                );
+                for(let id of config.guild_ids) {
+                    await rest.put(
+                        Routes.applicationGuildCommands(config.auth.app_id, id),
+                        {body: []},
+                    );
+                }
             }
 
 
