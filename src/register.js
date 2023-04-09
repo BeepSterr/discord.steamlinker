@@ -34,6 +34,11 @@ export default function(client, modules){
                     Routes.applicationCommands(config.auth.app_id),
                     { body: commands },
                 );
+
+                await rest.put(
+                    Routes.applicationGuildCommands(config.auth.app_id),
+                    { body: [] },
+                );
             }
 
 

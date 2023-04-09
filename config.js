@@ -19,6 +19,12 @@ export default {
             "enabled": true,
             "steam_api_key": process.env.STEAM_API_KEY,
         },
+
+        "stats": {
+            "enabled": true,
+            "bot_id": process.env.DISCORD_APP_ID,
+            "topgg_token": process.env.TOPGG_TOKEN,
+        }
     }
 
 }
