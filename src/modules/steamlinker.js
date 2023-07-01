@@ -63,7 +63,7 @@ export default class SteamLinker {
 
             try{
                 let data = await this.getEmbeds(interaction.targetMessage);
-                data.embeds.length > 0 ? await interaction.editReply({...data, content: "Result: "}) : await interaction.editReply({content: 'No steam links found'});
+                data ? await interaction.editReply({...data, content: "Result: "}) : await interaction.editReply({content: 'No steam links found'});
             }catch(ex){
                 await interaction.editReply( {content: '`⚠️ ' + ex.message + '`'})
             }
