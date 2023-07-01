@@ -42,14 +42,9 @@ export default class SteamLinker {
 
     async getEmbeds(message) {
         let urls = getSteamURLS(message.content);
-        let embeds = [];
         for (let url of urls) {
-            let result = await urlToEmbed(url);
-            if(result instanceof EmbedBuilder) {
-                embeds.push(result.toJSON());
-            }
+            return await urlToEmbed(url);
         }
-        return embeds;
     }
 
     async handleInteraction(interaction) {
@@ -57,11 +52,18 @@ export default class SteamLinker {
         if (interaction instanceof MessageContextMenuCommandInteraction && interaction.commandName === this.interaction_name) {
 
             // API calls can take a second, defer!
-            await interaction.deferReply({ephemeral: true});
+
+            // Messages older than 1 hour will be replied to emphemerally, to prevent spam.
+            let emp = false;
+            if(interaction.targetMessage.createdAt < new Date(Date.now() - 1000 * 60 * 60)){
+                emp = true;
+            }
+
+            await interaction.deferReply({ephemeral: emp});
 
             try{
-                let embeds = await this.getEmbeds(interaction.targetMessage);
-                embeds.length > 0 ? await interaction.editReply({embeds: embeds}) : await interaction.editReply({content: 'No steam links found'});
+                let data = await this.getEmbeds(interaction.targetMessage);
+                data.embeds.length > 0 ? await interaction.editReply({...data, content: "Result: "}) : await interaction.editReply({content: 'No steam links found'});
             }catch(ex){
                 await interaction.editReply( {content: '`⚠️ ' + ex.message + '`'})
             }

@@ -1,8 +1,18 @@
 import 'dotenv/config';
 import {default as SteamAPI} from "steamapi";
-import {AttachmentBuilder, Embed, EmbedBuilder} from "discord.js";
+import {
+    ActionRow,
+    ActionRowBuilder,
+    AttachmentBuilder,
+    ButtonBuilder,
+    ButtonComponent, ButtonStyle,
+    Embed,
+    EmbedBuilder
+} from "discord.js";
 import Scraper from "steam.scraper";
 const steam = new SteamAPI(process.env.STEAM_API_KEY);
+
+export const prefix = 'https://api.awoo.industries/send?url='
 
 export function getSteamURLS(text) {
     let match = text.match(/\b((https?|ftp|file):\/\/|(www|ftp)\.)[-A-Z0-9+&@#\/%?=~_|$!:,.;]*[A-Z0-9+&@#\/%=~_|$]/ig);
@@ -38,16 +48,24 @@ async function parseCommunity(url){
             w_embed.setURL(url.href);
 
             w_embed.addFields([
-                { name: 'Tags', value: workshop_data.tags.join('\n'), inline: true },
+                { name: 'Tags', value: workshop_data.tags.map(x => `\`${x}\``).join(', '), inline: true },
                 { name: 'Author', value: `[Steam Profile](${workshop_data.author})`, inline: true },
                 // { name: 'Ratings', value: String(workshop_data.rating_total), inline: true },
-                { name: 'Open in Steam', value: `steam://url/CommunityFilePage/${workshop_id}`, inline: false },
 
             ])
 
-            return w_embed;
+            const workshop_row = new ActionRowBuilder();
+            workshop_row.addComponents(
+                new ButtonBuilder()
+                    .setStyle(ButtonStyle.Link)
+                    .setURL(`${prefix}steam://url/CommunityFilePage/${workshop_id}`)
+                    .setLabel('Open in Steam')
+            );
 
-            break;
+            return {
+                embeds: [w_embed.toJSON()],
+                components: [workshop_row.toJSON()]
+            };
 
         case 'id':
         case 'profiles':
@@ -79,16 +97,56 @@ async function parseCommunity(url){
                 ]);
             }
 
-            embed.addFields([
-                { name: 'Open in Steam', value: `steam://url/steamIdPage/${profile_id}`, inline: false}
-            ])
 
-            return embed;
+            const user_row = new ActionRowBuilder();
+            user_row.addComponents(
+                new ButtonBuilder()
+                    .setStyle(ButtonStyle.Link)
+                    .setURL(`${prefix}steam://url/steamIdPage/${profile_id}`)
+                    .setLabel('Open in Steam')
+            );
+
+            return {
+                embeds: [embed.toJSON()],
+                components: [user_row.toJSON()]
+            };
     }
 
     return 'a';
 }
 
 async function parseStore(url){
-    return 'b';
+
+    //https://store.steampowered.com/app/440/Team_Fortress_2/
+    let parts = url.pathname.split('/');
+    let app_id = parts[2];
+
+    const store_data = await Scraper.getStorepage(url.href);
+
+    const w_embed = new EmbedBuilder();
+    w_embed.setTitle(store_data.name);
+    // w_embed.setDescription('```' + store_data.description+ '```');
+    w_embed.setImage(store_data.image);
+    w_embed.setURL(url.href);
+
+    w_embed.addFields([
+        { name: 'Tags', value: store_data.tags.map(x => `\`${x}\``).join(', '), inline: true },
+        // { name: 'Open in Steam', value: `${prefix}steam://store/${app_id}`, inline: false },
+
+    ]);
+
+    const row = new ActionRowBuilder();
+    row.addComponents(
+        new ButtonBuilder()
+            .setStyle(ButtonStyle.Link)
+            .setURL(`${prefix}steam://store/${app_id}`)
+            .setLabel('Open in Steam')
+    );
+
+    return {
+        embeds: [w_embed.toJSON()],
+        components: [row.toJSON()]
+    };
+
+
 }

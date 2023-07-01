@@ -8,7 +8,7 @@ export default {
 
     // Used for registering slash commands
     "guild_ids": [
-        "850836877924761610"
+        "543661757974183960"
     ],
 
     "modules": {
