@@ -8,16 +8,17 @@ export default {
 
     // Used for registering slash commands
     "guild_ids": [
-        "543661757974183960"
+        "1124974598841171998"
     ],
 
     "modules": {
 
-        // Allows you to assign an extra role if a member has
-        // Any of the other roles, Useful to "combine" roles.
         "steamlinker": {
             "enabled": true,
             "steam_api_key": process.env.STEAM_API_KEY,
+            "opted_out_users": [
+
+            ]
         },
 
         "stats": {

@@ -4,6 +4,8 @@ const config = (await import('../config.js')).default;
 
 let client = new Client({ intents: [
         GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        "MessageContent",
     ]
 });
 

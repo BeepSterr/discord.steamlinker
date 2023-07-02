@@ -1,12 +1,8 @@
 import 'dotenv/config';
 import {default as SteamAPI} from "steamapi";
 import {
-    ActionRow,
-    ActionRowBuilder,
-    AttachmentBuilder,
     ButtonBuilder,
-    ButtonComponent, ButtonStyle,
-    Embed,
+    ButtonStyle,
     EmbedBuilder
 } from "discord.js";
 import Scraper from "steam.scraper";
@@ -45,7 +41,7 @@ async function parseCommunity(url){
             w_embed.setTitle(workshop_data.title);
             w_embed.setDescription('```' + workshop_data.description+ '```');
             w_embed.setThumbnail(workshop_data.image);
-            w_embed.setURL(url.href);
+            w_embed.setURL(`${prefix}steam://CommunityFilePage/${workshop_id}`);
 
             w_embed.addFields([
                 { name: 'Tags', value: workshop_data.tags.map(x => `\`${x}\``).join(', '), inline: true },
@@ -54,17 +50,12 @@ async function parseCommunity(url){
 
             ])
 
-            const workshop_row = new ActionRowBuilder();
-            workshop_row.addComponents(
-                new ButtonBuilder()
-                    .setStyle(ButtonStyle.Link)
-                    .setURL(`${prefix}steam://url/CommunityFilePage/${workshop_id}`)
-                    .setLabel('Open in Steam')
-            );
-
             return {
-                embeds: [w_embed.toJSON()],
-                components: [workshop_row.toJSON()]
+                embed: w_embed.toJSON(),
+                buttons: [new ButtonBuilder()
+                    .setStyle(ButtonStyle.Link)
+                    .setURL(`${prefix}steam://CommunityFilePage/${workshop_id}`)
+                    .setLabel(`Open "${workshop_data.title}" in Steam`)]
             };
 
         case 'id':
@@ -77,7 +68,7 @@ async function parseCommunity(url){
             embed.setTitle(profile_data.nickname);
             embed.setDescription('```' + profile_data.summary + '```');
             embed.setThumbnail(profile_data.avatar);
-            embed.setURL(url.href);
+            embed.setURL(`${prefix}steam://url/steamIdPage/${profile_id}`);
 
             embed.addFields(
                 [
@@ -97,18 +88,12 @@ async function parseCommunity(url){
                 ]);
             }
 
-
-            const user_row = new ActionRowBuilder();
-            user_row.addComponents(
-                new ButtonBuilder()
+            return {
+                embed: embed.toJSON(),
+                buttons: [new ButtonBuilder()
                     .setStyle(ButtonStyle.Link)
                     .setURL(`${prefix}steam://url/steamIdPage/${profile_id}`)
-                    .setLabel('Open in Steam')
-            );
-
-            return {
-                embeds: [embed.toJSON()],
-                components: [user_row.toJSON()]
+                    .setLabel(`Open "${profile_data.nickname}" in Steam`)]
             };
     }
 
@@ -127,25 +112,19 @@ async function parseStore(url){
     w_embed.setTitle(store_data.name);
     // w_embed.setDescription('```' + store_data.description+ '```');
     w_embed.setImage(store_data.image);
-    w_embed.setURL(url.href);
+    w_embed.setURL(`${prefix}steam://store/${app_id}`);
 
     w_embed.addFields([
         { name: 'Tags', value: store_data.tags.map(x => `\`${x}\``).join(', '), inline: true },
-        // { name: 'Open in Steam', value: `${prefix}steam://store/${app_id}`, inline: false },
 
     ]);
 
-    const row = new ActionRowBuilder();
-    row.addComponents(
-        new ButtonBuilder()
+    return {
+        embed: w_embed.toJSON(),
+        buttons: [new ButtonBuilder()
             .setStyle(ButtonStyle.Link)
             .setURL(`${prefix}steam://store/${app_id}`)
-            .setLabel('Open in Steam')
-    );
-
-    return {
-        embeds: [w_embed.toJSON()],
-        components: [row.toJSON()]
+            .setLabel(`Open "${store_data.name}" in Steam`)]
     };
 
 
