@@ -69,8 +69,10 @@ export default class SteamLinker {
 
         for (let url of urls) {
             let data = await urlToEmbed(url);
-            reply_data.embeds.push(data.embed);
-            reply_data.components[0].addComponents(data.buttons);
+            if(data){
+                reply_data.embeds.push(data.embed);
+                reply_data.components[0].addComponents(data.buttons);
+            }
         }
 
         console.log(reply_data.components);

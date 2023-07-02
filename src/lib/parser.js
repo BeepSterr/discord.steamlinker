@@ -33,7 +33,7 @@ async function parseCommunity(url){
 
 
             const workshop_id = url.searchParams.get('id')
-            if(!workshop_id) return '';
+            if(!workshop_id) return false;
 
             const workshop_data = await Scraper.getWorkshopItem(url.href);
 
@@ -97,7 +97,7 @@ async function parseCommunity(url){
             };
     }
 
-    return 'a';
+    return false;
 }
 
 async function parseStore(url){
