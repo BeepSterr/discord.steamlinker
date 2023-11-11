@@ -16,14 +16,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PAT }}
+      - name: Log in to registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
 
       - name: Build Docker image
-        run: docker build -t beepsterr/discord.steamlinker --platform=linux/amd64 --progress=plain -f ./Dockerfile .
+        run: docker build -t ghcr.io/beepsterr/discord.steamlinker:${{ github.ref_name }} --platform=linux/amd64 --progress=plain -f ./Dockerfile .
 
       - name: Push to package
-        run: docker push beepsterr/discord.steamlinker
+        run: docker push ghcr.io/beepsterr/discord.steamlinker:${{ github.ref_name }}

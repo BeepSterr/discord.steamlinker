@@ -23,6 +23,8 @@ export default async function urlToEmbed(url){
             return await parseStore(url);
     }
 
+    return false;
+
 }
 
 async function parseCommunity(url){
